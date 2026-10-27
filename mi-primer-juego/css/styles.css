@@ -1,0 +1,14 @@
+:root { color-scheme: dark; }
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; background: #090e1c; font-family: 'Trebuchet MS', Arial, sans-serif; }
+body { display: flex; justify-content: center; align-items: center; background: radial-gradient(circle at 50% 0%, #192b4f 0%, #0a1226 45%, #080b17 100%); }
+.site-shell { width: min(98vw, 1300px); padding: 12px 0 8px; }
+.topline, footer { color: #6e88a2; font-size: 11px; font-weight: 800; letter-spacing: .22em; padding: 7px 6px 10px; }
+.topline { display: flex; align-items: center; gap: 13px; }
+.topline-sep { color: #45556b; }
+.status-dot { width: 7px; height: 7px; background: #4aefbd; border-radius: 50%; box-shadow: 0 0 13px #3befb5; }
+#game-container { width: 100%; display: flex; justify-content: center; align-items: center; border: 1px solid #27405b; border-radius: 14px; overflow: hidden; box-shadow: 0 18px 70px #03060f99, 0 0 24px #4df7d612; background: #0b1225; }
+#game-container canvas { display: block; max-width: 100%; height: auto; }
+footer { display: flex; align-items: center; justify-content: center; gap: 18px; padding: 13px 0 8px; text-align: center; font-size: 10px; letter-spacing: .12em; }
+footer span { color: #55efbf; }
+@media(max-width:700px) { .topline, footer { font-size: 9px; letter-spacing: .08em; } .site-shell { width: 100%; padding-top: 0; } #game-container { border-radius: 0; } }
