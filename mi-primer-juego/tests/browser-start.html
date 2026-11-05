@@ -1,0 +1,50 @@
+<!doctype html><meta charset="utf-8"><title>Prueba de entrada a misiones</title>
+<pre id="result">RUNNING</pre><iframe src="../index.html" width="1200" height="900"></iframe>
+<script>
+const frame = document.querySelector('iframe');
+const result = document.querySelector('#result');
+const errors = [];
+frame.addEventListener('load', () => {
+  const w = frame.contentWindow;
+  w.addEventListener('error', e => errors.push(e.message));
+  const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+  const until = async test => { for (let n=0; n<100 && !test(); n++) await wait(100); };
+  (async () => {
+    for (let n = 0; !w.QuitoStartup?.ready && n < 150; n++) await wait(100);
+    if (!w.QuitoStartup?.ready) throw Error('No arrancó el menú');
+    const game = w.quitoGame;
+    for (let level = 1; level <= 4; level++) {
+      w.NovaData.progress.unlocked = 4;
+      game.scene.stop('Game'); game.scene.stop('HUD'); game.scene.stop('Menu');
+      await until(() => !game.scene.isActive('Game') && !game.scene.isActive('HUD'));
+      game.scene.start('CityMap', { selected: level });
+      await until(() => game.scene.isActive('CityMap') && game.scene.getScene('CityMap').selected === level);
+      const map = game.scene.getScene('CityMap');
+      const back = map.enter.list.find(child => child.input?.enabled);
+      back.emit('pointerdown');
+      await until(() => game.scene.isActive('Game') && game.scene.getScene('Game').level === level && game.scene.isActive('HUD'));
+      const world = game.scene.getScene('Game');
+      const hud = game.scene.getScene('HUD');
+      if (!game.scene.isActive('Game') || !hud.introLayer?.active || !world.hero) throw Error('No inició el nivel ' + level + ': ' + errors.join('; ') + ' active=' + game.scene.isActive('Game') + ' hero=' + Boolean(world.hero) + ' hud=' + Boolean(hud.introLayer));
+      const button = hud.introLayer.list.find(child => child.type === 'Container');
+      button.list.find(child => child.input?.enabled).emit('pointerdown');
+      await wait(200);
+      if (world.storyOpening || world.time.paused || !hud.lifeText) throw Error('Misión bloqueada: ' + level);
+      if (new URLSearchParams(location.search).has('preview')) {
+        result.style.display='none';
+        document.body.style.margin='0';
+        frame.style.cssText='border:0;width:100vw;height:100vh';
+        if(new URLSearchParams(location.search).has('controls')) hud.padToggle.list.find(child=>child.input?.enabled).emit('pointerdown');
+        world.time.paused=true;
+        return;
+      }
+      world.placeBomb(); world.useMemory();
+      await wait(100);
+      if (errors.length) throw Error(errors.join('\n'));
+      result.textContent += '\nPASS: mapa → nivel ' + level + ' → misión y acciones';
+    }
+    result.textContent += '\nSUCCESS';
+    game.destroy(true);
+  })().catch(error => { result.textContent += '\nFAIL: ' + error.stack; });
+});
+</script>

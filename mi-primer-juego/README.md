@@ -1,84 +1,149 @@
-# BOMBA NOVA — Laberinto Neón
+## Corrección de inicio — 5 de noviembre de 2026
 
-Videojuego arcade original **inspirado en la mecánica de Bomberman**, desarrollado con **Phaser 3** en JavaScript. Es un proyecto web estático (HTML + CSS + JS), sin backend y sin compilación, preparado para publicarse directamente con GitHub Pages.
+Se corrigió el fallo `g.lineStyle(...).strokeArc is not a function` de la escena **Preloader**. Phaser 3 no tiene ese método en `Graphics`: los arcos decorativos del Convento de San Diego ahora usan `lineBetween()`. Se agregó la prueba `tests/preloader-textures.js` para comprobar la creación de las texturas antes de abrir el juego.
 
-## Cómo jugar
+**Para instalar esta revisión:** descomprime esta carpeta nueva, ábrela en VS Code, inicia `index.html` con Live Server y recarga con `Ctrl + F5`. Evita mezclar archivos de versiones anteriores.
 
-- **Flechas / W, A, S, D:** moverte por las casillas. El personaje gira para mirar a la izquierda, derecha, arriba o abajo, y anima sus pies y brazos mientras camina.
-- **Espacio:** colocar una bomba (explota en cruz después de ~2,15 segundos).
-- **Esc:** pausar / continuar.
-- **Pantalla táctil:** controles direccionales y botón BOMBA en el panel derecho.
-- **Meta:** destruir cajas, eliminar los enemigos y llegar al portal oculto para superar tres sectores.
-- ¡Evita tus propias explosiones! Empiezas con **3 vidas**.
+**Pruebas automáticas:** `node tests/preloader-textures.js` y `node tests/smoke.js`. Se revisó la sintaxis de los JavaScript. La ejecución gráfica completa debe verificarse en el navegador con acceso al CDN de Phaser.
 
-### Potenciadores
+---
 
-- **Fuego:** aumenta el alcance de tus explosiones.
-- **Bomba:** permite colocar más bombas al mismo tiempo.
-- **Velocidad:** permite moverte más rápido.
+# QUITO: Guardianes de las Leyendas
 
-La dificultad se configura desde **OPCIONES**. El equilibrio general es ahora un poco más accesible: hay **2, 4 y 6 enemigos** según el sector (antes 3, 5 y 7), los enemigos se mueven algo más despacio y las bombas dan un instante adicional para escapar. Se conservan las tres vidas y todas las animaciones direccionales. Tu récord y preferencias se guardan localmente en el navegador.
+**Videojuego 2D original con Phaser 3**, desarrollado a partir de Bomba Nova. Recorre cuatro lugares emblemáticos de Quito y recupera sus recuerdos usando dos tipos de bombas.
 
-## Cómo ejecutar en VS Code
+## Iniciar el juego en Visual Studio Code
 
-1. Descomprime este proyecto.
-2. Abre la carpeta `mi-primer-juego` en VS Code.
-3. Instala la extensión **Live Server** (si no la tienes).
-4. Abre `index.html` con **Open with Live Server**.
-5. El navegador ejecutará el juego. **Necesitas Internet** para cargar Phaser 3 desde su CDN.
+1. Descomprime `Quito_Guardianes_Leyendas_Phaser3.zip`.
+2. Abre la carpeta `Quito_Guardianes_Leyendas_Phaser3` en **VS Code** (`Archivo → Abrir carpeta`).
+3. Instala la extensión **Live Server** si todavía no la tienes.
+4. Haz clic derecho sobre `index.html` y selecciona **Open with Live Server**.
+5. El juego aparecerá en el navegador. **Necesita Internet al cargar**, ya que Phaser 3 se obtiene mediante CDN; los dibujos del juego se generan con código; las fotos reales de los lugares se obtienen desde Wikimedia Commons con atribución y requieren Internet.
 
-También puedes usar `python -m http.server 8000` y entrar a `http://localhost:8000`.
+Alternativa desde PowerShell, dentro de la carpeta:
 
-## Estructura del proyecto
-
-```text
-mi-primer-juego/
-├── index.html
-├── css/
-│   └── styles.css
-├── js/
-│   ├── config.js                 # Reglas generales, récord y configuración
-│   ├── audio.js                  # Sonidos generados por Web Audio
-│   ├── ui.js                     # Componentes y utilidades visuales
-│   ├── main.js                   # Configuración de Phaser 3
-│   └── scenes/
-│       ├── BootScene.js          # Inicializa preferencias
-│       ├── PreloaderScene.js     # Texturas generadas con Graphics
-│       ├── MenuScene.js          # Pantalla inicial
-│       ├── HelpScene.js          # Instrucciones
-│       ├── SettingsScene.js      # Sonido y dificultad
-│       ├── GameScene.js          # Mapa, IA, bombas, colisiones y niveles
-│       ├── HUDScene.js           # Interfaz fija y pausa
-│       └── ResultScene.js        # Victoria, derrota y reintento
-└── README.md
+```powershell
+py -m http.server 5500
 ```
 
-## Relación con los PDF de clase
+Después abre http://localhost:5500/. Para cerrar el servidor: `Ctrl+C`.
 
-- **Arquitectura de escenas:** Boot → Preloader → Menú → Juego → Resultado. Se amplió con escenas de Ayuda, Opciones y HUD.
-- **Protagonista, acciones, respuesta y objetivo:** personaje animado, movimiento y bombas, tiempo/puntaje/vidas, portal de victoria.
-- **Mapa mayor que la pantalla:** tablero 25 × 19 de 44 píxeles (1100 × 836). La cámara sigue al personaje con `startFollow()` y se limita con `setBounds()`.
-- **Física y movimiento:** movimiento de cuadrícula en cuatro direcciones (propio del género), animación direccional de personaje con sprites procedimentales, detección de colisiones y efectos temporizados. El prototipo del carrito usa ocho direcciones; aquí se adaptó al diseño del laberinto.
-- **HUD:** permanece fijo mediante otra escena mientras la cámara se desplaza.
-- **Condición de victoria y repetición:** elimina enemigos, descubre el portal, supera 3 sectores, registra tiempo, puntaje y récord.
-- **Entrega:** repositorio público y enlace en GitHub Pages.
+## Controles
 
-## Publicar en GitHub Pages
+| Tecla | Acción |
+|---|---|
+| Flechas / WASD | Caminar (Nova mira a la dirección correcta) |
+| ESPACIO | Colocar una bomba normal (rompe cajas) |
+| E | Luz de memoria: acércate al objetivo (máximo 2 casillas en cualquier dirección) para encender faroles, revelar secretos y aturdir sombras |
+| SHIFT | Comodín equipado (viento o reloj) |
+| ESC | Pausa |
+| Ratón / táctil | Menús y botones de juego |
 
-Sigue el procedimiento del taller «Setup, Desarrollo y Despliegue con Phaser 3»:
+**Tutorial del nivel 1:** busca un farol apagado con un pequeño halo dorado. Camina hasta quedar a **dos casillas o menos**, incluso diagonalmente, y presiona **E**. El farol se encenderá y el objetivo subirá de 0/3 a 1/3. **ESPACIO no enciende faroles**: solo sirve para destruir cajas y enemigos. El HUD inferior avisa cuando estás suficientemente cerca y si la luz se está recargando.
 
-1. Crea un repositorio público en la organización de la asignatura, con el nombre indicado por tu docente: `apellidos-nombres-jueg-gr3` (o el formato exacto vigente de tu grupo).
-2. Sube **el contenido** de esta carpeta a la raíz del repositorio (no otra subcarpeta), de modo que `index.html` esté en la raíz.
-3. En GitHub: **Settings → Pages**.
-4. En **Source** elige **Deploy from a branch**, selecciona **main** y la carpeta **/(root)** y guarda.
-5. Cuando GitHub publique, abre el enlace `https://<usuario-o-organizacion>.github.io/<nombre-repositorio>/` y comprueba el juego.
-6. Entrega en Teams el enlace público al juego y al repositorio según el taller.
+La bomba de memoria se **recarga automáticamente en 10 segundos**. No es necesario derrotar a todos los enemigos. Para pasar de capítulo, cumple la misión y camina hasta el portal turquesa (extremo inferior derecho del mapa).
 
-> Este juego se inspira en las reglas clásicas de laberintos con bombas, pero el nombre, los personajes, los gráficos y la lógica fueron creados para este proyecto. No incluye recursos gráficos oficiales de Bomberman.
+## Capítulos
 
-## Notas técnicas
+1. **Plaza Grande — El canto perdido:** restaura 3 faroles usando E.
+2. **San Francisco — La piedra de Cantuña:** abre las cajas especiales y revela el sello con E, recoge 3 piedras y pisa 3 pedestales. El cuarto queda vacío intencionalmente.
+3. **San Diego — El camino de Almeida:** encuentra 3 llaves de luz. E también abre temporalmente pasadizos y aturde a las sombras.
+4. **El Panecillo — El corazón de la niebla:** rompe escudos de los 3 núcleos con ESPACIO y restáuralos con E. ¡Evita las franjas que la niebla avisa antes de atacar!
 
-- Phaser 3 se carga por CDN en `index.html`.
-- Las texturas se dibujan programáticamente con Phaser Graphics: no hay imágenes externas.
-- Los sonidos son sintetizados con Web Audio API tras interacción del usuario.
-- Las partidas no requieren registro ni red; solo la carga inicial del motor requiere conexión.
+Antes de comenzar cada capítulo aparece una **presentación narrativa con su misión**. Tras completar cada lugar se desbloquea una **postal cultural** en el Libro de Leyendas. Los relatos tradicionales están diferenciados de los elementos de fantasía del videojuego.
+
+## Fotografías reales de Quito
+
+Cada capítulo incluye **una postal con fotografía real** al iniciar la misión y **una mini fotografía al lado del título** durante la partida. Pulsa sobre ella para abrir la página original, donde están el autor y la licencia. El proyecto carga cuatro fotografías desde Wikimedia Commons, por lo que también se mostrarán en GitHub Pages con conexión a Internet. Si el servidor de imágenes no responde, aparecerá un dibujo de respaldo y **no se interrumpirá la partida**.
+
+Los autores y las licencias están documentados en [`docs/CREDITOS_FOTOGRAFIAS.md`](docs/CREDITOS_FOTOGRAFIAS.md). Mantén estos créditos al publicar el repositorio.
+
+## Comodines
+
+- **Poncho protector**: absorbe automáticamente un golpe.
+- **Viento del Pichincha**: aleja sombras cercanas. SHIFT.
+- **Reloj ancestral**: paraliza a las sombras 4 segundos. SHIFT.
+- **Farol mejorado**: permite llevar dos cargas de memoria.
+- Además: mayor alcance, capacidad de bombas y velocidad.
+
+Cada nivel tiene 3 vidas por intento. Al perder, puedes reintentarlo sin borrar los capítulos desbloqueados. Hay opciones de dificultad y reducción de destellos.
+
+## Estructura
+
+```text
+Quito_Guardianes_Leyendas_Phaser3/
+├── index.html                 Entrada web / Phaser 3 por CDN
+├── css/styles.css             Diseño del contenedor web
+├── js/
+│   ├── config.js              Datos culturales, niveles, ajustes y guardado
+│   ├── main.js                Inicio de Phaser
+│   ├── art.js                 Paisajes originales generados por Canvas 2D
+│   ├── photos.js              Postales fotográficas reales (Wikimedia Commons)
+│   ├── audio.js               Efectos propios por WebAudio
+│   ├── ui.js                  Sistema de tarjetas, botones y textos
+│   └── scenes/
+│       ├── BootScene.js       Arranque
+│       ├── PreloaderScene.js  Texturas de los personajes y escenarios
+│       ├── MenuScene.js       Portada
+│       ├── IntroScene.js      Prólogo
+│       ├── CityMapScene.js    Selección de nivel
+│       ├── LegendBookScene.js Postales
+│       ├── HelpScene.js       Controles
+│       ├── SettingsScene.js   Configuración
+│       ├── GameScene.js       Reglas y misiones, sin repetir código
+│       ├── HUDScene.js        Barra de misión, pausa y controles táctiles
+│       ├── ResultScene.js     Victoria o derrota
+│       └── EndingScene.js     Amanecer final
+└── docs/
+    └── DISENO_ORIGINAL.md     Documento de diseño previo
+```
+
+## Publicar gratis en GitHub Pages
+
+1. Crea un repositorio de GitHub. Sube los **contenidos** de esta carpeta a la raíz del repositorio (en particular `index.html`, `css`, `js`).
+2. Ve a `Settings → Pages`, elige `Deploy from a branch`, rama `main` y carpeta `/(root)`.
+3. Guarda y abre la dirección `https://TU-USUARIO.github.io/NOMBRE-REPOSITORIO/` cuando GitHub indique que la publicación está activa.
+
+No necesita backend, base de datos, Node.js ni compilación. El progreso se almacena en `localStorage` del navegador.
+
+## ¿Qué hace único al juego?
+
+A diferencia de un juego tradicional de laberintos, las bombas aquí tienen **dos finalidades opuestas**: las normales destruyen y las bombas de memoria restauran. El jugador debe combinar ambas para reconstruir cuatro escenarios inspirados en leyendas quiteñas. El avance cambia la apariencia de los lugares y desbloquea postales que distinguen tradición cultural y ficción original.
+
+**Nota académica:** Las leyendas mencionadas son adaptaciones de la tradición oral. Nova, la Niebla del Olvido, las bombas mágicas y los fragmentos son personajes y recursos de ficción. Juego educativo-creativo, no reconstrucción histórica literal.
+
+## Comprobación opcional del código (Node.js)
+
+Las reglas de las cuatro misiones tienen una prueba automatizada sin dependencias:
+
+```powershell
+node tests/smoke.js
+```
+
+La prueba comprueba que se puede acceder a cada objetivo (retirando cajas destructibles), que los faroles responden a la bomba de memoria, que las tres piedras y pedestales funcionan, que las llaves se recogen y que los escudos finales se rompen antes de restaurarse. **No sustituye jugar una partida completa en el navegador.**
+
+Para **probar todos los niveles rápidamente** desde el navegador, abre las herramientas de desarrollador (`F12`) y ejecuta en la consola:
+
+```javascript
+NovaData.progress.unlocked = 4;
+NovaData.save();
+location.reload();
+```
+
+Esto desbloquea los capítulos para pruebas sin declarar las postales como completadas. Para empezar una partida normal desde cero, utiliza **Nueva aventura**.
+
+**Atajo para Windows:** también puedes hacer doble clic en `INICIAR_JUEGO.bat` si tienes Python instalado. Se abrirá un servidor local en el puerto 5500 y la página del juego. Si el puerto ya está ocupado, usa Live Server o cambia el puerto en el `.bat`.
+
+
+## Solución para pantalla oscura (corrección del 5 de noviembre de 2026)
+
+La versión corregida inicia Phaser de manera controlada: carga primero el motor, después
+los scripts en orden y **solo esconde el mensaje de carga cuando el menú realmente se crea**.
+El renderizado usa el modo Canvas, de mayor compatibilidad en equipos Windows.
+Si ocurre un problema, se muestra un error visible y el botón **Volver a intentar**.
+
+- Abre el `index.html` de **esta versión** mediante Live Server.
+- Si el navegador conserva la versión anterior, presiona `Ctrl + F5`.
+- Debes tener conexión a Internet para cargar Phaser 3 por CDN.
+- Si aparece un mensaje de error, abre F12 > Consola y copia la primera línea roja.
+- No abras directamente `file:///.../index.html`: usa Live Server.

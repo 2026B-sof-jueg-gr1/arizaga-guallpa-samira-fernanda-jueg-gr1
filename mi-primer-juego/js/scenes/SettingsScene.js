@@ -1,28 +1,17 @@
 class SettingsScene extends Phaser.Scene {
-  constructor() { super('Settings'); }
-  create() {
-    NovaUI.backdrop(this);
-    NovaUI.header(this, 'CENTRO DE CONTROL // 02', 'OPCIONES', 'Configura tu experiencia y vuelve a la aventura.');
-    NovaUI.panel(this, 238, 260, 724, 328);
-    NovaUI.text(this, 278, 314, 'EFECTOS DE SONIDO', 21, '#ecf8ff');
-    this.soundButton = NovaUI.button(this, 786, 315, '', () => {
-      NovaData.settings.sound = !NovaData.settings.sound;
-      NovaData.save(); this.refresh();
-    }, {width:246,height:56,size:17});
-    this.add.rectangle(280, 369, 636, 1, 0x2b4660);
-    NovaUI.text(this, 278, 415, 'DIFICULTAD', 21, '#ecf8ff');
-    this.levelButton = NovaUI.button(this, 786, 416, '', () => {
-      const options=['FÁCIL','NORMAL','DIFÍCIL'];
-      NovaData.settings.difficulty = options[(options.indexOf(NovaData.settings.difficulty)+1)%options.length];
-      NovaData.save(); this.refresh();
-    }, {width:246,height:56,size:17});
-    NovaUI.text(this, 280, 500, 'FÁCIL: enemigos lentos · DIFÍCIL: enemigos más rápidos', 16, '#87a6bf',{bold:false});
-    NovaUI.button(this, 600, 664, '← GUARDAR Y VOLVER', () => this.scene.start('Menu'), { width:342, primary:true, size:19 });
-    this.refresh();
-    this.input.keyboard.once('keydown-ESC', () => this.scene.start('Menu'));
-  }
-  refresh() {
-    this.soundButton.list.find(o => o.type === 'Text').setText(NovaData.settings.sound ? '♫ ACTIVADO' : '♫ DESACTIVADO');
-    this.levelButton.list.find(o => o.type === 'Text').setText(`◈ ${NovaData.settings.difficulty}`);
-  }
+ constructor(){super('Settings');}
+ create(){NovaUI.background(this,2);NovaUI.title(this,'PERSONALIZA TU EXPERIENCIA','Opciones','Puedes cambiar la dificultad y el brillo de las explosiones cuando quieras.');NovaUI.back(this,()=>this.scene.start('Menu'));
+  NovaUI.card(this,175,259,850,404,0x25223E,.96);
+  const row=(y,title,desc)=>{NovaUI.text(this,212,y,title,21,'#FBE0B1');NovaUI.text(this,214,y+35,desc,16,'#C6BFD2',{bold:false});};
+  row(318,'SONIDO','Pequeños efectos creados directamente con WebAudio.');
+  this.sound=NovaUI.button(this,856,334,NovaData.settings.sound?'ACTIVADO':'DESACTIVADO',()=>{NovaData.settings.sound=!NovaData.settings.sound;NovaData.save();this.soundText.setText(NovaData.settings.sound?'ACTIVADO':'DESACTIVADO');},{w:218,h:50});this.soundText=this.sound.list[this.sound.list.length-1];
+  NovaUI.line(this,212,391,774);
+  row(425,'DIFICULTAD','En FÁCIL las sombras se mueven un poco más lento.');
+  this.diffs=['FÁCIL','NORMAL','DIFÍCIL'];this.diffButtons=[];
+  this.diffs.forEach((d,i)=>{const b=NovaUI.button(this,663+i*124,456,d,()=>{NovaData.settings.difficulty=d;NovaData.save();this.updateDifficulty();},{w:113,h:48,font:13});this.diffButtons.push(b);});this.updateDifficulty();
+  NovaUI.line(this,212,515,774);
+  row(544,'DESTELLOS','Reduce los flashes brillantes de las explosiones.');
+  this.flash=NovaUI.button(this,858,567,NovaData.settings.reducedFlash?'REDUCIDOS':'NORMALES',()=>{NovaData.settings.reducedFlash=!NovaData.settings.reducedFlash;NovaData.save();this.flash.list[this.flash.list.length-1].setText(NovaData.settings.reducedFlash?'REDUCIDOS':'NORMALES');},{w:217,h:46,font:14});
+ }
+ updateDifficulty(){this.diffButtons.forEach((b,i)=>b.list[1].setStrokeStyle(this.diffs[i]===NovaData.settings.difficulty?3:1,this.diffs[i]===NovaData.settings.difficulty?0xFFE5AA:0x826C91));}
 }

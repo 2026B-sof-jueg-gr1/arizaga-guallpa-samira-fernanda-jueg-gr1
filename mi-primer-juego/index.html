@@ -1,32 +1,37 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#0b1225" />
-  <meta name="description" content="Bomba Nova: una aventura arcade original de laberintos, explosiones y enemigos hecha con Phaser 3." />
-  <title>BOMBA NOVA | Laberinto Neón</title>
-  <link rel="stylesheet" href="css/styles.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#14132c">
+  <meta name="description" content="Quito: Guardianes de las Leyendas. Un juego original de exploración y bombas mágicas, creado en Phaser 3.">
+  <title>Quito: Guardianes de las Leyendas · Phaser 3</title>
+  <link rel="stylesheet" href="css/styles.css?v=20261105-menu2">
 </head>
 <body>
-  <div class="site-shell">
-    <div class="topline"><span class="status-dot"></span> ARCADE ORIGINAL <span class="topline-sep">/</span> DESARROLLADO CON PHASER 3</div>
-    <main id="game-container" aria-label="Videojuego Bomba Nova"></main>
-    <footer>UN UNIVERSO DE LABERINTOS Y EXPLOSIONES <span>✦</span> FLECHAS / WASD · ESPACIO · ESC</footer>
-  </div>
-  <noscript>Activa JavaScript para jugar a Bomba Nova.</noscript>
-  <script src="https://cdn.jsdelivr.net/npm/phaser@3.90.0/dist/phaser.min.js" onerror="this.onerror=null;this.src='https://cdnjs.cloudflare.com/ajax/libs/phaser/3.90.0/phaser.min.js';"></script>
-  <script src="js/config.js"></script>
-  <script src="js/audio.js"></script>
-  <script src="js/ui.js"></script>
-  <script src="js/scenes/BootScene.js"></script>
-  <script src="js/scenes/PreloaderScene.js"></script>
-  <script src="js/scenes/MenuScene.js"></script>
-  <script src="js/scenes/HelpScene.js"></script>
-  <script src="js/scenes/SettingsScene.js"></script>
-  <script src="js/scenes/GameScene.js"></script>
-  <script src="js/scenes/HUDScene.js"></script>
-  <script src="js/scenes/ResultScene.js"></script>
-  <script src="js/main.js"></script>
+  <main class="shell">
+    <header class="site-header">
+      <span><i class="star">✦</i> ESTUDIO NOVA <span class="divider">/</span> UNA AVENTURA QUITEÑA</span>
+      <span class="edition">EDICIÓN 2026 <i class="star">✧</i></span>
+    </header>
+    <section class="game-shell" aria-label="Videojuego Quito: Guardianes de las Leyendas">
+      <div id="game-container" role="application" aria-label="Juego en Phaser 3"></div>
+      <div class="loading-note" id="loading-note" role="status" aria-live="polite">
+        <div class="startup-card">
+          <div class="startup-sparkle" aria-hidden="true">✦</div>
+          <h2 id="startup-heading">Preparando las luces de Quito…</h2>
+          <p id="startup-detail">Cargando los recuerdos de nuestra ciudad</p>
+          <button id="retry-startup" type="button" hidden>↻ Volver a intentar</button>
+        </div>
+      </div>
+    </section>
+    <footer class="site-footer">
+      <span>UNA CIUDAD. CUATRO LEYENDAS. UNA GUARDIANA.</span>
+      <span>WASD / FLECHAS · ESPACIO · E · SHIFT</span>
+    </footer>
+  </main>
+  <noscript>Activa JavaScript para disfrutar del juego.</noscript>
+  <!-- El cargador verifica Phaser y cada escena antes de iniciar el juego. -->
+  <script src="js/bootstrap.js?v=20261105-menu2" defer></script>
 </body>
 </html>

@@ -1,48 +1,27 @@
-window.NovaUI = {
-  text(scene, x, y, value, size = 24, color = '#f5f9ff', opts = {}) {
-    return scene.add.text(x, y, value, { fontFamily: 'Trebuchet MS, Arial, sans-serif',
-      fontSize: `${size}px`, color, fontStyle: opts.bold === false ? 'normal' : 'bold',
-      align: opts.align || 'left', lineSpacing: opts.lineSpacing || 5,
-      wordWrap: opts.wrap ? { width: opts.wrap } : undefined }).setOrigin(opts.ox ?? 0, opts.oy ?? 0.5).setDepth(opts.depth ?? 2);
-  },
-  button(scene, x, y, label, onClick, options = {}) {
-    const w = options.width || 280, h = options.height || 62;
-    const active = options.primary === true;
-    const base = active ? 0x48dfb5 : 0x182943;
-    const hover = active ? 0x85ffdc : 0x274461;
-    const textColor = active ? '#082338' : '#f2f9ff';
-    const container = scene.add.container(x, y).setDepth(options.depth || 10);
-    const shadow = scene.add.rectangle(0, 5, w, h, 0x000000, .28).setOrigin(.5).setStrokeStyle(1, 0x355572, .3);
-    const bg = scene.add.rectangle(0, 0, w, h, base, 1).setOrigin(.5).setStrokeStyle(1.5, active ? 0x77f9d5 : 0x355572, 1);
-    const caption = this.text(scene, 0, 0, label, options.size || 19, textColor, { ox: .5, oy: .5 });
-    container.add([shadow, bg, caption]);
-    bg.setInteractive({ useHandCursor: true });
-    bg.on('pointerover', () => { bg.setFillStyle(hover); container.setScale(1.035); });
-    bg.on('pointerout', () => { bg.setFillStyle(base); container.setScale(1); });
-    bg.on('pointerdown', () => { NovaAudio.play('tap'); onClick(); });
-    return container;
-  },
-  header(scene, eyebrow, title, subtitle) {
-    this.text(scene, 80, 69, eyebrow, 13, '#58f2c3');
-    this.text(scene, 80, 124, title, 44);
-    this.text(scene, 82, 178, subtitle, 18, '#8baac6', { bold: false });
-    scene.add.rectangle(80, 218, 1040, 2, 0x29445d).setOrigin(0);
-  },
-  backdrop(scene) {
-    scene.cameras.main.setBackgroundColor('#0b1225');
-    const g = scene.add.graphics().setDepth(0);
-    g.fillStyle(0x0b1225).fillRect(0, 0, NOVA.WIDTH, NOVA.HEIGHT);
-    for (let x=0; x<NOVA.WIDTH; x+=44) { g.lineStyle(1, 0x1b3654, .22); g.lineBetween(x, 0, x, NOVA.HEIGHT); }
-    for (let y=0; y<NOVA.HEIGHT; y+=44) { g.lineStyle(1, 0x1b3654, .22); g.lineBetween(0, y, NOVA.WIDTH, y); }
-    g.fillStyle(0x335e75, .22).fillCircle(1050, 100, 260);
-    g.fillStyle(0x3c356e, .17).fillCircle(70, 710, 280);
-    g.lineStyle(2, 0x4df1c5, .25).strokeRect(16, 16, 1168, 728);
-    this.text(scene, 1140, 726, 'NOVA // 2026', 12, '#536f8c', { ox: 1 });
-  },
-  panel(scene, x, y, w, h, color = 0x13233c) {
-    const g = scene.add.graphics().setDepth(1);
-    g.fillStyle(color, .96).fillRoundedRect(x, y, w, h, 17);
-    g.lineStyle(1.5, 0x355470, .9).strokeRoundedRect(x, y, w, h, 17);
-    return g;
-  }
+window.NovaUI={
+ text(s,x,y,value,size=22,color='#FFF7E9',opts={}){
+  return s.add.text(x,y,value,{fontFamily:opts.serif?'Georgia, Cambria, serif':'Trebuchet MS, Arial, sans-serif',fontStyle:opts.bold===false?'normal':'bold',fontSize:size+'px',color,align:opts.align||'left',lineSpacing:opts.lineSpacing||7,
+   stroke:opts.stroke||undefined,strokeThickness:opts.stroke?2:0,wordWrap:opts.wrap?{width:opts.wrap}:undefined}).setOrigin(opts.ox??0,opts.oy??.5).setDepth(opts.depth??4);
+ },
+ button(s,x,y,label,fn,opt={}){
+  const w=opt.w||250,h=opt.h||56,primary=Boolean(opt.primary);const base=primary?0xF5C87F:0x25253F,top=primary?0xFFDB99:0x333251;
+  const wrap=s.add.container(x,y).setDepth(opt.depth||30);
+  const shadow=s.add.rectangle(0,5,w,h,0x040816,.35).setOrigin(.5);
+  const back=s.add.rectangle(0,0,w,h,base,1).setStrokeStyle(2,primary?0xFFF0BE:0x83749A,.8);
+  const stripe=s.add.rectangle(-w/2+8,0,4,h-17,primary?0xA56C61:0x71DDCA,.8);
+  const t=this.text(s,0,0,label,opt.font||17,primary?'#34243B':'#FFF5E9',{ox:.5});wrap.add([shadow,back,stripe,t]);
+  back.setInteractive({useHandCursor:true});
+  back.on('pointerover',()=>{back.setFillStyle(top);s.tweens.add({targets:wrap,scale:1.03,duration:110});});
+  back.on('pointerout',()=>{back.setFillStyle(base);s.tweens.add({targets:wrap,scale:1,duration:110});});
+  back.on('pointerdown',()=>{NovaAudio.play('tap');fn();});
+  return wrap;
+ },
+ card(s,x,y,w,h,shade=0x201E39,alpha=.95){const g=s.add.graphics().setDepth(1);g.fillStyle(0x080A19,.26).fillRoundedRect(x+5,y+7,w,h,18);g.fillStyle(shade,alpha).fillRoundedRect(x,y,w,h,18);g.lineStyle(2,0x89708E,.68).strokeRoundedRect(x,y,w,h,18);return g;},
+ line(s,x,y,w,color=0xBE9B92){const g=s.add.graphics().setDepth(3);g.lineStyle(1.3,color,.6).lineBetween(x,y,x+w,y);return g;},
+ title(s,eyebrow,heading,sub){this.text(s,65,68,eyebrow,14,'#FBD28F');this.text(s,65,133,heading,48,'#FFF7E9',{serif:true});if(sub)this.text(s,67,187,sub,18,'#C9BDD7',{bold:false,wrap:1010});this.line(s,65,223,1072);},
+ back(s,fn,label='←  VOLVER'){this.button(s,1023,68,label,fn,{w:245,h:48,font:15});},
+ background(s,stage=0){s.cameras.main.setBackgroundColor('#16162F');s.add.image(600,380,'sky-'+stage).setDepth(-20);const veil=s.add.rectangle(600,380,1200,760,0x12112A,.19).setDepth(-17);return veil;},
+ tag(s,x,y,value,color='#F6D596'){const t=this.text(s,x+14,y+15,value,13,color);const b=s.add.rectangle(x+Math.max(70,t.width+28)/2,y+15,Math.max(70,t.width+28),31,0x252541,.91).setStrokeStyle(1,0xBBA1AC,.65).setDepth(2);t.setDepth(3);return [b,t];},
+ particle(s,x,y,color=0xF5CE95,n=12){for(let i=0;i<n;i++){const a=Math.PI*2*i/n,d=20+Math.random()*55;const dot=s.add.circle(x,y,2.5+Math.random()*3,color,.85).setDepth(60);s.tweens.add({targets:dot,x:x+Math.cos(a)*d,y:y+Math.sin(a)*d,alpha:0,scale:0,duration:450+Math.random()*420,ease:'Cubic.easeOut',onComplete:()=>dot.destroy()});}},
+ glow(s,x,y,color=0xF5CA7D,r=37){return s.add.circle(x,y,r,color,.13).setBlendMode(Phaser.BlendModes.ADD);}
 };

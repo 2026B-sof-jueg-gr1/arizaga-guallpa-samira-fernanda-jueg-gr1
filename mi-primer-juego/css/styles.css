@@ -1,14 +1,18 @@
-:root { color-scheme: dark; }
-* { box-sizing: border-box; }
-html, body { margin: 0; min-height: 100%; background: #090e1c; font-family: 'Trebuchet MS', Arial, sans-serif; }
-body { display: flex; justify-content: center; align-items: center; background: radial-gradient(circle at 50% 0%, #192b4f 0%, #0a1226 45%, #080b17 100%); }
-.site-shell { width: min(98vw, 1300px); padding: 12px 0 8px; }
-.topline, footer { color: #6e88a2; font-size: 11px; font-weight: 800; letter-spacing: .22em; padding: 7px 6px 10px; }
-.topline { display: flex; align-items: center; gap: 13px; }
-.topline-sep { color: #45556b; }
-.status-dot { width: 7px; height: 7px; background: #4aefbd; border-radius: 50%; box-shadow: 0 0 13px #3befb5; }
-#game-container { width: 100%; display: flex; justify-content: center; align-items: center; border: 1px solid #27405b; border-radius: 14px; overflow: hidden; box-shadow: 0 18px 70px #03060f99, 0 0 24px #4df7d612; background: #0b1225; }
-#game-container canvas { display: block; max-width: 100%; height: auto; }
-footer { display: flex; align-items: center; justify-content: center; gap: 18px; padding: 13px 0 8px; text-align: center; font-size: 10px; letter-spacing: .12em; }
-footer span { color: #55efbf; }
-@media(max-width:700px) { .topline, footer { font-size: 9px; letter-spacing: .08em; } .site-shell { width: 100%; padding-top: 0; } #game-container { border-radius: 0; } }
+:root{color-scheme:dark;--ink:#f9f5ec;--muted:#b9a9be;--gold:#f7cd88}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#101020;font-family:'Trebuchet MS',Verdana,sans-serif;color:var(--ink)}
+body{background:radial-gradient(ellipse at 15% 12%,#333052 0%,transparent 38%),radial-gradient(ellipse at 80% 82%,#25384d 0%,transparent 43%),#101020;display:flex;align-items:center;justify-content:center;padding:16px}
+.shell{width:min(1240px,100%)}.site-header,.site-footer{display:flex;justify-content:space-between;gap:14px;align-items:center;color:#c7b7c9;font-weight:700;letter-spacing:.17em;font-size:11px;padding:12px 9px}.site-header{margin-bottom:9px}.site-footer{margin-top:8px;font-size:10px;opacity:.84}.star{color:var(--gold);font-size:16px;font-style:normal}.divider{padding:0 10px;opacity:.35}
+.game-shell{position:relative;overflow:hidden;aspect-ratio:1200/760;width:100%;border:1px solid #8d7196;border-radius:23px;background:#221f38;box-shadow:0 22px 80px #0008,0 0 0 4px #ffffff07,0 0 55px #ab7ed125}#game-container{width:100%;height:100%;touch-action:none}#game-container canvas{display:block;outline:0}.loading-note{position:absolute;inset:0;display:flex;justify-content:center;align-items:center;font-size:16px;color:#f3d7a5;letter-spacing:.12em;pointer-events:none;z-index:20;background:linear-gradient(155deg,#1b1b38ed,#302441eb)}#game-container canvas{position:relative;z-index:1}
+@media(max-width:680px){body{padding:2px;min-height:100dvh}.site-header{padding:8px 6px;font-size:8px}.site-footer{padding:8px 5px;font-size:8px}.edition{display:none}.shell{width:100%}.game-shell{border-radius:10px}}
+
+/* Pantalla de carga y recuperación: evita la pantalla vacía si falla alguna escena. */
+.startup-card{width:min(570px,90%);padding:37px 30px;border:1px solid #cfaa91a1;border-radius:20px;text-align:center;background:linear-gradient(140deg,#302a4b,#16182ef8);box-shadow:0 24px 65px #08071a80;display:flex;align-items:center;flex-direction:column;gap:13px}
+.startup-sparkle{font-size:50px;color:#ffdea0;text-shadow:0 0 25px #ffce91;animation:novaPulse 2.5s ease-in-out infinite}
+.startup-card h2{font:700 clamp(22px,3vw,32px) Georgia,serif;letter-spacing:0;color:#fff2dd;margin:0}
+.startup-card p{font:15px/1.6 'Trebuchet MS',Arial,sans-serif;letter-spacing:.025em;color:#cfc5d9;white-space:pre-line;overflow-wrap:anywhere;margin:0;max-width:100%}
+.startup-card button{border:1px solid #fff0bf;background:#f2c883;color:#30223c;border-radius:10px;padding:13px 23px;font-weight:800;font-size:15px;cursor:pointer;margin-top:10px}
+.startup-card button:hover{background:#ffdea2}
+.loading-note.failed{background:#121428f3}
+.loading-note.failed .startup-sparkle{color:#ffb2b9}
+@keyframes novaPulse{0%,100%{transform:scale(.9);opacity:.6}50%{transform:scale(1.15);opacity:1}}
+@media(max-width:680px){.startup-card{padding:22px 16px}.startup-card p{font-size:12px}.startup-sparkle{font-size:35px}}

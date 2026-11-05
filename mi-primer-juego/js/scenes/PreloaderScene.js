@@ -2,14 +2,21 @@ class PreloaderScene extends Phaser.Scene {
   constructor() { super('Preloader'); }
   create() {
     this.makeTextures();
+    NovaArt.makeSkies(this);
     this.scene.start('Menu');
   }
   makeTextures() {
     const t = NOVA.TILE;
     const make = (name, draw) => {
-      const g = this.make.graphics({ x: 0, y: 0 }, false);
+      const g = this.add.graphics({ x: 0, y: 0 });
       draw(g);
       g.generateTexture(name, t, t);
+      g.destroy();
+    };
+    const makeSized = (name, w, h, draw) => {
+      const g = this.add.graphics({ x: 0, y: 0 });
+      draw(g, w, h);
+      g.generateTexture(name, w, h);
       g.destroy();
     };
     make('tile-floor', g => {
@@ -169,6 +176,249 @@ class PreloaderScene extends Phaser.Scene {
       g.fillStyle(0x2f405e).fillRoundedRect(5, 5, 34, 34, 8);
       g.fillStyle(0x9d8dff).fillTriangle(25, 8, 14, 24, 24, 24);
       g.fillStyle(0xe0caff).fillTriangle(18, 36, 31, 19, 21, 19);
+    });
+
+    // Nuevas baldosas por barrio: mismo motor, paletas y piedra distintas.
+    const mix = (a,b,p) => {
+      const ar=(a>>16)&255, ag=(a>>8)&255, ab=a&255;
+      const br=(b>>16)&255, bg=(b>>8)&255, bb=b&255;
+      return (Math.round(ar+(br-ar)*p)<<16)|(Math.round(ag+(bg-ag)*p)<<8)|Math.round(ab+(bb-ab)*p);
+    };
+    NOVA.STAGES.forEach((level,i)=>{
+      make(`floor-${i+1}`,g=>{
+        g.fillStyle(mix(level.floor,0x1B1D3C,.47)).fillRect(0,0,44,44);
+        g.fillStyle(level.floor,.88).fillRoundedRect(1,1,42,42,3);
+        g.lineStyle(1.2,mix(level.floor,0xFFFFFF,.35),.37);
+        g.lineBetween(1,13,43,13);g.lineBetween(1,31,43,31);
+        g.lineBetween(19,1,19,13);g.lineBetween(32,13,32,31);g.lineBetween(14,31,14,43);
+        g.fillStyle(0xF1DDAD,.14).fillCircle(9,8,1.4).fillCircle(37,37,1.2);
+      });
+      make(`floor-alt-${i+1}`,g=>{
+        g.fillStyle(mix(level.floor,0x1B1D3C,.52)).fillRect(0,0,44,44);
+        g.fillStyle(mix(level.floor,0xEEE0C4,.12)).fillRoundedRect(1,1,42,42,3);
+        g.lineStyle(1,mix(level.floor,0xFFFFFF,.45),.32).strokeRoundedRect(2,2,40,40,3);
+        g.lineBetween(12,1,12,42);g.lineBetween(0,22,44,22);
+        g.fillStyle(0x182A43,.14).fillRect(23,8,4,2);
+      });
+      make(`stonewall-${i+1}`,g=>{
+        g.fillStyle(0x10182D,.44).fillRoundedRect(1,6,42,37,5);
+        g.fillStyle(mix(level.wall,0x12172D,.33)).fillRoundedRect(1,2,42,36,5);
+        g.fillStyle(level.wall).fillRoundedRect(3,0,38,31,5);
+        g.fillStyle(mix(level.wall,0xF8E4C2,.27)).fillRoundedRect(5,2,34,23,3);
+        g.lineStyle(2,mix(level.wall,0x10152B,.55),.82).lineBetween(5,13,39,13);
+        g.lineStyle(1,mix(level.wall,0x10152B,.5),.8).lineBetween(20,2,20,13);
+        g.lineBetween(13,13,13,25);g.lineBetween(33,13,33,25);
+        g.fillStyle(0xFFF1C8,.19).fillRect(8,5,14,3);
+      });
+      make(`crate-${i+1}`,g=>{
+        g.fillStyle(0x130F20,.32).fillRoundedRect(3,8,39,34,4);
+        g.fillStyle(mix(level.crate,0x211630,.28)).fillRoundedRect(3,4,38,34,4);
+        g.fillStyle(level.crate).fillRoundedRect(4,1,36,32,4);
+        g.lineStyle(3,mix(level.crate,0xF9E2AD,.26),.94).strokeRoundedRect(7,5,30,25,3);
+        g.lineStyle(4,mix(level.crate,0x32203D,.36),.9).lineBetween(10,8,34,27);
+        g.lineBetween(34,8,10,27);
+        g.fillStyle(0xEDD7A3).fillRect(5,5,5,5).fillRect(34,24,5,5);
+      });
+    });
+    make('lantern-off',g=>{
+      g.fillStyle(0x0B1327,.24).fillEllipse(22,41,28,5);
+      g.fillStyle(0x49364C).fillRoundedRect(18,9,8,6,3);
+      g.lineStyle(3,0x9C8B85).strokeRoundedRect(12,11,20,22,4);
+      g.fillStyle(0x473D62).fillRoundedRect(13,15,18,17,2);
+      g.fillStyle(0xB89A82).fillRoundedRect(9,32,26,5,2);
+      g.fillStyle(0xB89A82).fillRoundedRect(18,37,8,5,2);
+    });
+    make('lantern-on',g=>{
+      g.fillStyle(0xFFE9A2,.19).fillCircle(22,22,21);
+      g.fillStyle(0xF9C36B,.23).fillCircle(22,21,17);
+      g.fillStyle(0x49364C).fillRoundedRect(18,8,8,6,3);
+      g.lineStyle(3,0xE4BA77).strokeRoundedRect(12,11,20,22,4);
+      g.fillStyle(0xFFE9AB).fillRoundedRect(14,14,16,17,4);
+      g.fillStyle(0xFFF8D9).fillEllipse(22,22,5,11);
+      g.fillStyle(0xCB956B).fillRoundedRect(9,32,26,5,2);
+      g.fillStyle(0xA8806B).fillRoundedRect(18,37,8,5,2);
+    });
+    make('memory-bomb',g=>{
+      g.fillStyle(0x75FFF1,.18).fillCircle(22,22,21);
+      g.fillStyle(0x473D8D).fillCircle(22,25,15);
+      g.lineStyle(2,0x8AEBE0).strokeCircle(22,25,13);
+      g.fillStyle(0xD5FFE9).fillCircle(22,25,9);
+      g.fillStyle(0xFFF4CF).fillTriangle(22,14,32,25,22,36);
+      g.fillStyle(0xFFD17F).fillCircle(22,24,4);
+      g.fillStyle(0xE8CB83).fillRoundedRect(19,4,7,10,2);
+    });
+    make('memory-wave',g=>{
+      g.fillStyle(0x6AEAD4,.17).fillRoundedRect(1,1,42,42,8);
+      g.lineStyle(3,0xE1F9BE,.9).strokeRoundedRect(4,4,36,36,8);
+      g.fillStyle(0xFFFFFF,.63).fillCircle(22,22,6);
+      g.lineStyle(2,0x71FFF0,.9).lineBetween(22,4,22,12).lineBetween(4,22,12,22).lineBetween(32,22,40,22);
+    });
+    make('portal-closed',g=>{
+      g.fillStyle(0x100E29,.65).fillEllipse(22,25,15,17);
+      g.lineStyle(4,0x9276B5,.8).strokeEllipse(22,25,23,33);
+      g.fillStyle(0x796198,.35).fillEllipse(22,25,12,20);
+    });
+    make('stone-token',g=>{
+      g.fillStyle(0x15132B,.28).fillEllipse(22,39,25,7);
+      g.fillStyle(0xC6B093).fillRoundedRect(9,8,26,27,5);
+      g.fillStyle(0xF2DCAA).fillRoundedRect(12,7,20,20,4);
+      g.lineStyle(2,0x98717C,.9).lineBetween(14,17,23,10).lineBetween(23,10,30,18);
+      g.fillStyle(0x79DFC9).fillCircle(22,21,4);
+    });
+    make('pedestal-off',g=>{
+      g.fillStyle(0x15132B,.27).fillEllipse(22,39,32,7);
+      g.fillStyle(0x5D587A).fillRoundedRect(8,20,28,15,3);
+      g.fillStyle(0x9E8D9C).fillRoundedRect(6,15,32,9,3);
+      g.lineStyle(2,0xBC9DAC,.7).strokeEllipse(22,19,14,6);
+    });
+    make('pedestal-on',g=>{
+      g.fillStyle(0xFBD78A,.18).fillCircle(22,19,21);
+      g.fillStyle(0x746B89).fillRoundedRect(8,20,28,15,3);
+      g.fillStyle(0xE6C599).fillRoundedRect(6,15,32,9,3);
+      g.fillStyle(0xE8F1CC).fillTriangle(22,2,31,18,22,23);
+      g.fillStyle(0x7BE9DD).fillCircle(22,15,6);
+    });
+    make('seal',g=>{
+      g.fillStyle(0x221D49,.78).fillRoundedRect(6,6,32,32,9);
+      g.lineStyle(2,0xA78ADC).strokeRoundedRect(8,8,28,28,7);
+      g.fillStyle(0xBDA6EE).fillTriangle(22,9,35,22,22,35).fillTriangle(22,9,9,22,22,35);
+      g.fillStyle(0xFFE4A0).fillCircle(22,22,4);
+    });
+    make('key-glow',g=>{
+      g.fillStyle(0x82F1DF,.18).fillCircle(22,21,20);
+      g.lineStyle(5,0xF8DF95).strokeCircle(16,16,7);
+      g.lineStyle(5,0xF8DF95).lineBetween(20,22,33,35);
+      g.lineBetween(27,29,33,23).lineBetween(30,32,37,26);
+      g.fillStyle(0xFFFFFF).fillCircle(16,16,2);
+    });
+    make('mist-door',g=>{
+      g.fillStyle(0x8064BD,.36).fillRoundedRect(5,2,34,39,9);
+      g.lineStyle(3,0xC4A0FE).strokeRoundedRect(9,3,26,34,8);
+      g.fillStyle(0xBE9FFF,.45).fillEllipse(22,19,11,26);
+      g.fillStyle(0xFFFFFF,.43).fillCircle(22,16,3);
+    });
+    make('core-shield',g=>{
+      g.fillStyle(0xE8A8ED,.13).fillCircle(22,22,22);
+      g.fillStyle(0x543B82).fillTriangle(22,2,39,23,22,42);
+      g.fillStyle(0xA36EDD).fillTriangle(22,2,5,23,22,42);
+      g.lineStyle(3,0xEAA7EF).strokeCircle(22,22,19);
+      g.fillStyle(0xECBDFF).fillCircle(22,22,4);
+    });
+    make('core-open',g=>{
+      g.fillStyle(0xFFA37E,.13).fillCircle(22,22,21);
+      g.fillStyle(0xE59B7F).fillTriangle(22,2,38,22,22,42);
+      g.fillStyle(0xFBD196).fillTriangle(22,2,6,22,22,42);
+      g.fillStyle(0xFFF7CC).fillCircle(22,21,5);
+    });
+    make('core-done',g=>{
+      g.fillStyle(0x6FFFE0,.19).fillCircle(22,22,21);
+      g.fillStyle(0x63C9AD).fillRoundedRect(17,8,10,28,4);
+      g.fillStyle(0xFEECAD).fillCircle(22,13,8);
+      g.fillStyle(0xF4FFFF).fillCircle(22,13,3);
+    });
+    make('boss',g=>{
+      g.fillStyle(0x74459D,.25).fillCircle(22,22,21);
+      g.fillStyle(0x513675).fillRoundedRect(4,8,36,30,14);
+      g.fillStyle(0x9470C1).fillRoundedRect(7,6,30,27,12);
+      g.fillStyle(0x1A1638).fillEllipse(16,21,7,10).fillEllipse(29,21,7,10);
+      g.fillStyle(0xFFB5CE).fillCircle(16,21,3).fillCircle(29,21,3);
+      g.fillStyle(0x644393).fillTriangle(10,12,3,0,23,11);
+      g.fillStyle(0x644393).fillTriangle(29,12,39,0,41,17);
+    });
+    make('item-shield',g=>{
+      g.fillStyle(0x78E4C4,.22).fillCircle(22,22,19);
+      g.fillStyle(0x5BAEA4).fillRoundedRect(12,10,20,25,5);
+      g.fillStyle(0xD5F6BF).fillTriangle(22,12,32,20,22,33);
+      g.fillStyle(0xFFFFFF).fillCircle(22,21,3);
+    });
+    make('item-clock',g=>{
+      g.fillStyle(0x9875D9,.28).fillCircle(22,22,20);
+      g.fillStyle(0xE4C4F9).fillCircle(22,22,14);
+      g.fillStyle(0x40366E).fillCircle(22,22,10);
+      g.lineStyle(3,0xFFF1C1).lineBetween(22,22,22,13).lineBetween(22,22,29,26);
+    });
+    make('item-wind',g=>{
+      g.fillStyle(0x74E3F1,.16).fillCircle(22,22,20);
+      g.lineStyle(4,0xBDF8E9).strokeEllipse(22,22,27,13);
+      g.lineBetween(12,17,31,10);g.lineBetween(13,25,33,31);
+    });
+    make('item-memory',g=>{
+      g.fillStyle(0xFFCE89,.2).fillCircle(22,22,20);
+      g.fillStyle(0xDAA774).fillRoundedRect(15,9,14,25,4);
+      g.fillStyle(0xFFF7D1).fillRoundedRect(18,12,8,18,3);
+      g.fillStyle(0x91EBDC).fillCircle(22,20,4);
+    });
+
+
+    makeSized('deco-lamp-post', 40, 92, (g,w,h)=>{
+      g.fillStyle(0x0d1327,.22).fillEllipse(20,86,18,6);
+      g.fillStyle(0x4B372F).fillRect(17,22,6,55);
+      g.fillStyle(0xD2B68A).fillRect(15,20,10,4);
+      g.lineStyle(4,0xD8B989).lineBetween(20,8,20,22).lineBetween(20,8,31,14);
+      g.fillStyle(0xF2D8A1).fillRoundedRect(24,14,12,16,4);
+      g.fillStyle(0xFFF1B8,.28).fillCircle(30,24,18);
+      g.fillStyle(0xFFF7D7,.95).fillRoundedRect(26,17,8,10,3);
+    });
+    makeSized('deco-planter', 64, 34, (g,w,h)=>{
+      g.fillStyle(0x3F2A22,.22).fillEllipse(32,29,46,6);
+      g.fillStyle(0xB57555).fillRoundedRect(10,12,44,14,4);
+      g.fillStyle(0xD89B74).fillRoundedRect(12,10,40,10,4);
+      for(const x of [18,26,34,42]){g.fillStyle(0x5E8F62).fillCircle(x,10,7);g.fillStyle(0x84BE7D).fillCircle(x+2,8,5);}
+      g.fillStyle(0xE8C26E).fillCircle(23,8,2);g.fillStyle(0xE58BA2).fillCircle(31,6,2);g.fillStyle(0xF0D7A1).fillCircle(39,8,2);
+    });
+    makeSized('deco-tree-top', 58, 60, (g,w,h)=>{
+      g.fillStyle(0x0c1324,.18).fillEllipse(29,54,28,8);
+      g.fillStyle(0x6E4E3E).fillRect(25,38,8,12);
+      g.fillStyle(0x3D6B48).fillCircle(29,31,18);
+      g.fillStyle(0x5F9966).fillCircle(19,27,13).fillCircle(39,27,13).fillCircle(29,18,12);
+      g.fillStyle(0x79B67B).fillCircle(23,24,8).fillCircle(35,22,7);
+    });
+    makeSized('landmark-plaza', 280, 136, (g,w,h)=>{
+      g.fillStyle(0x1B1C31,.18).fillEllipse(140,124,230,10);
+      g.fillStyle(0xC9C1B8).fillRoundedRect(18,66,244,42,6);
+      g.fillStyle(0xE7DED0).fillRoundedRect(24,56,232,32,5);
+      g.fillStyle(0xF2E8D8).fillRoundedRect(96,38,88,54,4);
+      g.fillStyle(0xC9C1B8).fillRoundedRect(112,28,56,20,4);
+      for(const x of [42,76,204,238]){g.fillStyle(0xEDE1D2).fillRoundedRect(x,28,24,70,4);g.fillStyle(0xC9C1B8).fillRect(x+4,20,16,10);g.fillStyle(0xB4A89D).fillTriangle(x+2,20,x+12,4,x+22,20);}
+      for(const x of [36,56,104,124,144,164,212,232]){g.fillStyle(0x856D63).fillRoundedRect(x,68,10,20,2);}
+      g.fillStyle(0x846B60).fillRoundedRect(128,58,24,30,3);
+      g.fillStyle(0xD4A15A).fillRect(138,12,4,18); g.fillStyle(0xE7D1A4).fillRect(136,10,8,4);
+      g.fillStyle(0x8AB388).fillEllipse(20,104,36,14);g.fillStyle(0x8AB388).fillEllipse(260,104,36,14);
+    });
+    makeSized('landmark-san-francisco', 304, 146, (g,w,h)=>{
+      g.fillStyle(0x1D1B2C,.18).fillEllipse(152,134,240,12);
+      for(let i=0;i<5;i++){g.fillStyle(i%2?0xC7A78B:0xDFC2A2).fillRoundedRect(54-i*6,108-i*10,196+i*12,9,3);}
+      g.fillStyle(0xE9D1B7).fillRoundedRect(42,54,220,40,5);
+      g.fillStyle(0xD7B79A).fillRoundedRect(50,44,204,18,4);
+      g.fillStyle(0xF1DEC7).fillRoundedRect(128,32,52,64,4);
+      g.fillStyle(0xD0B096).fillRoundedRect(146,18,16,16,3);
+      g.fillStyle(0xE9D1B7).fillRoundedRect(72,30,26,66,4);g.fillStyle(0xE9D1B7).fillRoundedRect(206,30,26,66,4);
+      g.fillStyle(0xD0B096).fillTriangle(70,30,85,10,100,30);g.fillTriangle(204,30,219,10,234,30);
+      for(const x of [84,104,124,176,196,216]){g.fillStyle(0x8A6C62).fillRoundedRect(x,58,8,28,2);} 
+      g.fillStyle(0x8A6C62).fillRoundedRect(145,54,18,34,2);
+    });
+    makeSized('landmark-san-diego', 268, 134, (g,w,h)=>{
+      g.fillStyle(0x181B2F,.18).fillEllipse(134,123,214,10);
+      g.fillStyle(0xDFE1E7).fillRoundedRect(18,48,232,54,6);
+      g.fillStyle(0xC5CBD7).fillRoundedRect(28,58,212,14,4);
+      g.fillStyle(0xBAC3D0).fillRoundedRect(28,80,212,12,4);
+      for(const x of [38,78,118,158,198]){g.fillStyle(0x8E95A7).fillRoundedRect(x,58,14,34,4);g.lineStyle(3,0xE7EAF0).lineBetween(x-3,60,x+7,48).lineBetween(x+7,48,x+17,60);}
+      g.fillStyle(0x7EC4C3).fillEllipse(134,100,54,20);g.fillStyle(0xE8F7F5).fillCircle(134,96,4);
+      g.fillStyle(0xE6EAF0).fillRoundedRect(104,26,60,20,4);
+      g.fillStyle(0xB0B8C5).fillTriangle(102,26,134,10,166,26);
+    });
+    makeSized('landmark-panecillo', 296, 150, (g,w,h)=>{
+      g.fillStyle(0x15172A,.18).fillEllipse(148,140,238,12);
+      g.fillStyle(0x4F6A56).fillEllipse(148,126,236,52);
+      g.fillStyle(0x6F8D72).fillEllipse(148,120,210,36);
+      g.fillStyle(0x7D8FA5).fillRect(138,52,20,44);
+      g.fillStyle(0xD3C7BC).fillRect(134,96,28,16);
+      g.fillStyle(0xCBB6B8).fillTriangle(148,20,132,58,164,58);
+      g.fillStyle(0xE8DCCB).fillTriangle(148,18,138,48,158,48);
+      g.fillStyle(0xE8DCCB).fillTriangle(148,38,122,70,133,76);
+      g.fillTriangle(148,36,174,70,163,76);
+      g.fillStyle(0xF9E2A3,.2).fillCircle(148,52,36);
+      for(let i=0;i<8;i++){const x=44+i*28;g.fillStyle(0xF7D79A,.55).fillRect(x,122+(i%2)*4,2,3);} 
     });
     make('exit', g => {
       g.fillStyle(0x48e5bd, .2).fillCircle(22, 22, 21);

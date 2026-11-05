@@ -1,20 +1,9 @@
 (() => {
-  if(typeof Phaser === 'undefined') {
-    document.querySelector('#game-container').textContent = 'No se pudo cargar Phaser 3. Comprueba tu conexión a Internet.';
-    return;
-  }
-  new Phaser.Game({
-    type: Phaser.AUTO,
-    parent: 'game-container',
-    width: NOVA.WIDTH, height: NOVA.HEIGHT,
-    backgroundColor: '#0b1225',
-    pixelArt: false,
-    antialias: true,
-    render: { roundPixels: true },
-    scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH,
-      width: NOVA.WIDTH, height: NOVA.HEIGHT },
-    physics: { default: 'arcade', arcade: { debug: false } },
-    input: { activePointers: 3 },
-    scene: [BootScene, PreloaderScene, MenuScene, HelpScene, SettingsScene, GameScene, HUDScene, ResultScene]
-  });
+ if (typeof Phaser === 'undefined') { window.QuitoStartup?.fail('Phaser 3 no pudo cargarse.'); return; }
+ window.NovaData.load();
+ window.QuitoStartup?.progress('Dibujando Quito y preparando las escenas…');
+ window.quitoGame=new Phaser.Game({type:Phaser.CANVAS,parent:'game-container',width:NOVA.WIDTH,height:NOVA.HEIGHT,
+  backgroundColor:'#15142e',pixelArt:false,antialias:true,render:{roundPixels:true},
+  scale:{mode:Phaser.Scale.FIT,autoCenter:Phaser.Scale.CENTER_BOTH,width:NOVA.WIDTH,height:NOVA.HEIGHT},
+  input:{activePointers:5},scene:[BootScene,PreloaderScene,MenuScene,IntroScene,CityMapScene,LegendBookScene,HelpScene,SettingsScene,GameScene,HUDScene,ResultScene,EndingScene]});
 })();
